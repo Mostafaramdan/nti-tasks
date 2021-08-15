@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title> task session 1</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    </head>
+    <body id='body'>
+        <div class="container mt-2 p-5" style="background-color: antiquewhite;" >
+            <button type="button" class="btn btn-primary m-1" id="create" data-bs-toggle="modal" data-bs-target="#form">
+                Create
+            </button>
+            <table class="table table-dark table-hover table-striped ">
+                <thead>
+                    <th>id</th>
+                    <th>name</th>
+                    <th>email</th>
+                    <th>Actions</th>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+        </div>
+        <div class="modal fade" id="form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Create</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="form">
+                        <input type="hidden" name="id">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="Name" class="form-label">Name</label>
+                                <input type="text" class="form-control" name="name" placeholder="enter user name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="Email" class="form-label">Email </label>
+                                <input type="email" class="form-control" name="email" placeholder="enter email">
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">password </label>
+                                <input type="password" class="form-control" name="password" placeholder="enter password">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button  type="button" id='close-model' class="btn btn-secondary " data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary " id='create-update'>Create</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script src="app.js"></script>
+        <script >
+            let users = new Users();
+            
+            // this for create 
+            document.getElementById('create').addEventListener('click',function(){
+                document.querySelector('form').reset()
+                document.getElementById('create-update').classList='btn btn-primary';
+                document.getElementById('create-update').innerText='Create';
+                document.getElementById('exampleModalLabel').innerHTML='Create New User'
+                document.querySelector("input[name='id']").value= '';
+            })
+
+            // this for Create Or Update
+            document.querySelector("form").addEventListener('submit', function(e){
+                e.preventDefault();
+                let user={}
+                for (let [key, val] of new FormData(this)) {
+                    user[key]=val;
+                }
+                let id = document.querySelector("input[name='id']").value;
+                user.id= id||new Date().getTime();
+                if(id){
+                    document.querySelector(`td[user-id="${id}"]`).parentElement.remove()
+                    users.update(user)
+                }else{
+                    users.create(user)
+                }
+                users.showAll([user])
+                document.getElementById('close-model').click();
+            });
+
+            //this for Update form to update next
+            let body = document.getElementsByTagName('body')[0];
+            body.addEventListener('click',function(e){
+                if (e.target.tagName == 'BUTTON' && e.target.classList.contains("btn-edit")){
+                    document.querySelector("input[name='id']").value= e.target.parentElement.getAttribute('user-id');
+                    document.getElementById('create-update').classList='btn btn-warning update';
+                    document.getElementById('create-update').innerText='Update';
+                    document.getElementById('exampleModalLabel').innerHTML='Update a User'
+                    let id= e.target.parentElement.getAttribute('user-id')
+                    let user = users.users.find(e=> e.id==id )
+                    document.querySelector("input[name='name']").value=user.name
+                    document.querySelector("input[name='email']").value=user.email
+                    document.querySelector("input[name='password']").value=user.password
+                }
+            })
+
+            // this for delete
+            document.getElementsByTagName('body')[0].addEventListener('click',function(e){
+            if (e.target.tagName == 'BUTTON' && e.target.classList.contains("btn-danger")){
+                if(confirm('do you want to delete this Item')){
+                    let id= this.parentElement.getAttribute('user-id')
+                    e.target.parentElement.parentElement.remove()
+                    users.delete(id)
+                }
+            }
+        })
+
+
+
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+</body>
+</html>
