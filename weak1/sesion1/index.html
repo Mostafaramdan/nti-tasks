@@ -53,6 +53,9 @@
         </div>
         <script src="app.js"></script>
         <script >
+            window.onload=function(){
+                document.querySelector('.btn-primary').remove()
+            }
             let users = new Users();
             document.getElementById('create').addEventListener('click',function(){
                 document.getElementById('create-update').classList='btn btn-primary';
